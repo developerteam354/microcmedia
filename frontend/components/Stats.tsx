@@ -53,16 +53,13 @@ export default function Stats() {
   return (
     <section className="py-20 px-6 relative overflow-hidden">
       {/* Divider line */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-20 bg-gradient-to-b from-transparent to-white/10" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-20 bg-gradient-to-b from-transparent to-black/[0.06]" />
 
       <div className="max-w-6xl mx-auto">
         <div
           ref={ref}
-          className="glass rounded-3xl border border-white/[0.07] p-10 md:p-14 relative overflow-hidden"
+          className="bg-white rounded-3xl border border-black/[0.06] p-10 md:p-14 relative overflow-hidden shadow-[0_2px_40px_rgba(0,0,0,0.04)]"
         >
-          {/* Background glow */}
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-900/10 to-blue-900/10 pointer-events-none" />
-
           <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-10">
             {stats.map((stat, i) => (
               <motion.div
@@ -76,14 +73,14 @@ export default function Stats() {
                 }}
                 className="text-center"
               >
-                <div className="text-4xl md:text-5xl font-bold gradient-text mb-2">
+                <div className="text-4xl md:text-5xl font-bold text-[#1a1a1a] mb-2">
                   <CountUp
                     target={stat.value}
                     suffix={stat.suffix}
                     isInView={isInView}
                   />
                 </div>
-                <div className="text-sm text-white/50 font-medium">
+                <div className="text-sm text-[#888] font-medium">
                   {stat.label}
                 </div>
               </motion.div>

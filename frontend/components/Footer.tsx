@@ -1,40 +1,37 @@
 "use client";
-
-import { motion } from "framer-motion";
+import Image from "next/image";
 
 const footerLinks = {
-  Services: [
-    "Web Development",
-    "Video Production",
-    "Digital Marketing",
-    "Graphic Design",
-    "UI/UX Design",
-  ],
+  Services: ["Web Development", "Video Production", "Digital Marketing", "Graphic Design", "UI/UX Design"],
   Company: ["About", "Work", "Blog", "Careers", "Press"],
   Legal: ["Privacy Policy", "Terms of Service", "Cookie Policy"],
 };
 
 export default function Footer() {
   return (
-    <footer className="relative pt-20 pb-10 px-6 overflow-hidden border-t border-white/[0.05]">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-t from-violet-950/10 to-transparent pointer-events-none" />
+    <footer className="relative pt-20 pb-10 px-6 overflow-hidden border-t border-black/[0.06]">
+      <div className="absolute inset-0 bg-gradient-to-t from-[#f0ede6]/50 to-transparent pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-5">
-              <div className="w-8 h-8 rounded-lg animated-border p-[1.5px]">
-                <div className="w-full h-full rounded-[6px] bg-[#050508] flex items-center justify-center">
-                  <span className="text-xs font-bold gradient-text">MC</span>
-                </div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="relative w-12 h-12 flex items-center justify-center">
+                <Image
+                  src="/logo.png"
+                  alt="Micro C Media Logo"
+                  width={48}
+                  height={48}
+                  quality={100}
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <span className="font-semibold text-white tracking-tight">
-                Micro C Media
+              <span className="font-bold text-[#1a1a1a] tracking-tight text-lg">
+                Micro C <span className="text-[#7c3aed]">Media</span>
               </span>
             </div>
-            <p className="text-sm text-white/40 leading-relaxed max-w-xs mb-6">
+            <p className="text-sm text-[#999] leading-relaxed max-w-xs mb-6">
               A premium creative agency crafting digital experiences that
               inspire, engage, and convert.
             </p>
@@ -44,7 +41,7 @@ export default function Footer() {
                   key={s}
                   href="#"
                   data-cursor-hover
-                  className="w-9 h-9 rounded-lg glass border border-white/[0.07] flex items-center justify-center text-xs text-white/40 hover:text-white hover:border-violet-500/30 transition-all"
+                  className="w-9 h-9 rounded-lg bg-[#f8f7f4] border border-black/[0.06] flex items-center justify-center text-xs text-[#999] hover:text-[#1a1a1a] hover:border-black/[0.12] transition-all"
                 >
                   {s}
                 </a>
@@ -55,7 +52,7 @@ export default function Footer() {
           {/* Links */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h4 className="text-xs font-semibold text-white/60 uppercase tracking-widest mb-5">
+              <h4 className="text-xs font-semibold text-[#1a1a1a] uppercase tracking-widest mb-5">
                 {category}
               </h4>
               <ul className="space-y-3">
@@ -63,7 +60,7 @@ export default function Footer() {
                   <li key={link}>
                     <a
                       href="#"
-                      className="text-sm text-white/35 hover:text-white/70 transition-colors"
+                      className="text-sm text-[#999] hover:text-[#1a1a1a] transition-colors"
                     >
                       {link}
                     </a>
@@ -75,13 +72,13 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-white/[0.05]">
-          <p className="text-xs text-white/25">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-black/[0.06]">
+          <p className="text-xs text-[#bbb]">
             © {new Date().getFullYear()} Micro C Media. All rights reserved.
           </p>
-          <p className="text-xs text-white/25">
+          <p className="text-xs text-[#bbb]">
             Crafted with{" "}
-            <span className="text-violet-400">♥</span> by Micro C Media
+            <span className="text-rose-400">♥</span> by Micro C Media
           </p>
         </div>
       </div>
