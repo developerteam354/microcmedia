@@ -6,6 +6,8 @@ import {
     useScroll,
     useTransform,
     MotionValue,
+    useMotionTemplate,
+    useSpring,
 } from "framer-motion";
 import Image from "next/image";
 
@@ -20,37 +22,10 @@ export interface StackImage {
 
 interface StickyImageStackProps {
     images: StackImage[];
-    /** Height of each "scroll slot" in vh units (default 100) */
-    slotHeight?: number;
     className?: string;
 }
 
-/**
- * StickyImageStack — true sticky card-stack effect.
- *
- * HOW IT WORKS
- * ─────────────
- * • The outer container is `(images.length * slotHeight)vh` tall, providing
- *   the scroll distance for all cards.
- * • Inside it sits a `sticky` inner div that pins to the top of the viewport
- *   for the entire scroll of the container.
- * • We track scroll progress [0 → 1] across the whole container with
- *   `useScroll({ target: containerRef, offset: ["start start", "end end"] })`.
- * • Each card i is active during progress window [i/n → (i+1)/n].
- *   – It slides UP into view from y:100% → y:0% during its entry window.
- *   – The card stays fully visible until the next card's entry begins.
- *   – scale subtly from 1 → 0.96 as the next card arrives (depth cue).
- * • All cards are absolutely stacked at top:0 in the sticky container.
- *   z-index increases with index so card 2 renders above card 1, etc.
- *
- * NO JITTER: scroll progress is read from the container (native scroll),
- * not from window.scrollY directly, keeping Lenis and Framer in sync.
- */
-export default function StickyImageStack({
-    images,
-    slotHeight = 100,
-    className = "",
-}: StickyImageStackProps) {
+export default function StickyImageStack({ images, className = "" }: StickyImageStackProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const n = images.length;
 
@@ -60,14 +35,12 @@ export default function StickyImageStack({
     });
 
     return (
-        /* Outer: tall enough to scroll through all cards */
         <div
             ref={containerRef}
             className={`relative ${className}`}
-            style={{ height: `${n * slotHeight}vh` }}
+            style={{ height: `${n * 100}vh` }}
         >
-            {/* Inner: sticks to viewport for the entire scroll of the container */}
-            <div className="sticky top-0 h-screen overflow-hidden">
+            <div className="sticky top-0 overflow-hidden" style={{ height: "100vh" }}>
                 {images.map((img, i) => (
                     <StackCard
                         key={i}
@@ -82,8 +55,6 @@ export default function StickyImageStack({
     );
 }
 
-// ─── individual card ───────────────────────────────────────────────────────
-
 function StackCard({
     img,
     index,
@@ -96,37 +67,72 @@ function StackCard({
     scrollYProgress: MotionValue<number>;
 }) {
     const n = total;
+    const sliceSize = 1 / n;
+    const sliceStart = index * sliceSize;
+    // Slide-in completes at 32% of the slice — gives it room to breathe
+    const entryEnd = sliceStart + sliceSize * 0.32;
 
-    // This card's active scroll window
-    const start = index / n;
-    const end = (index + 1) / n;
-
-    // ── Entry: slide up from below during [start - entryDuration, start] ──
-    // Give the entry some overlap so it feels snappy
-    const entryDuration = 0.06; // fraction of total scroll progress
-    const entryStart = index === 0 ? 0 : start - entryDuration;
-    const entryEnd = index === 0 ? 0 : start;
-
-    const y = useTransform(
+    // ── Slide up from below on entry ──
+    const yRaw = useTransform(
         scrollYProgress,
-        index === 0 ? [0, 0] : [entryStart, entryEnd],
-        index === 0 ? ["0%", "0%"] : ["100%", "0%"]
+        index === 0 ? [0, 1] : [sliceStart, entryEnd],
+        index === 0 ? ["0%", "0%"] : ["110%", "0%"]
     );
+    // Spring-smooth the raw transform for organic feel
+    const y = useSpring(yRaw, { stiffness: 60, damping: 18, mass: 0.8 });
 
-    // ── Exit: scale down slightly while the next card arrives ──
-    const scaleStart = end - entryDuration;
-    const scaleEnd = index < n - 1 ? end : 1;
-    const scale = useTransform(
+    // ── Scale & dim this card when the next one enters ──
+    const nextSliceStart = (index + 1) * sliceSize;
+    const nextEntryEnd = nextSliceStart + sliceSize * 0.32;
+
+    const scaleRaw = useTransform(
         scrollYProgress,
-        index < n - 1 ? [scaleStart, scaleEnd] : [0, 1],
-        index < n - 1 ? [1, 0.94] : [1, 1]
+        index < n - 1 ? [nextSliceStart, nextEntryEnd] : [0, 1],
+        index < n - 1 ? [1, 0.88] : [1, 1]
     );
+    const scale = useSpring(scaleRaw, { stiffness: 55, damping: 20, mass: 0.9 });
 
-    // ── Fade in on entry (only non-first cards need this) ──
-    const opacity = useTransform(
+    const opacityRaw = useTransform(
         scrollYProgress,
-        index === 0 ? [0, 0] : [entryStart, entryStart + 0.01],
-        [1, 1]
+        index < n - 1 ? [nextSliceStart, nextEntryEnd] : [0, 1],
+        index < n - 1 ? [1, 0.45] : [1, 1]
+    );
+    const opacity = useSpring(opacityRaw, { stiffness: 55, damping: 20, mass: 0.9 });
+
+    // ── Subtle Y offset so cards stack with depth ──
+    const stackOffsetRaw = useTransform(
+        scrollYProgress,
+        index < n - 1 ? [nextSliceStart, nextEntryEnd] : [0, 1],
+        index < n - 1 ? ["0px", "-28px"] : ["0px", "0px"]
+    );
+    const stackOffset = useSpring(stackOffsetRaw, { stiffness: 55, damping: 20, mass: 0.9 });
+
+    // ── Brightness filter ──
+    const brightnessVal = useTransform(
+        scrollYProgress,
+        index < n - 1 ? [nextSliceStart, nextEntryEnd] : [0, 1],
+        index < n - 1 ? [1, 0.55] : [1, 1]
+    );
+    const filterStyle = useMotionTemplate`brightness(${brightnessVal})`;
+
+    // ── Border glow on the active (top) card ──
+    // "Active" = this card is currently on top = it has entered but next hasn't yet
+    // We derive a "glow intensity" that fades in as card arrives and fades out as next arrives
+    const glowIn = useTransform(
+        scrollYProgress,
+        index === 0 ? [0, 0.001] : [sliceStart, entryEnd],
+        index === 0 ? [1, 1] : [0, 1]
+    );
+    const glowOut = useTransform(
+        scrollYProgress,
+        index < n - 1 ? [nextSliceStart, nextEntryEnd] : [0.999, 1],
+        index < n - 1 ? [1, 0] : [1, 0]
+    );
+    // Combined: both must be high → active
+    // We use glowIn as the driver and glowOut as a multiplier via CSS var trick
+    const borderOpacity = useTransform(
+        [glowIn, glowOut] as MotionValue<number>[],
+        ([i, o]: number[]) => Math.min(i, o)
     );
 
     return (
@@ -135,75 +141,132 @@ function StackCard({
             style={{
                 y,
                 scale,
-                opacity,
                 zIndex: index + 1,
                 transformOrigin: "top center",
+                opacity,
+                translateY: stackOffset,
             }}
         >
+            {/* Outer glow ring — animate opacity */}
+            <motion.div
+                className="absolute rounded-3xl pointer-events-none"
+                style={{
+                    /* Smaller card: 10vw/12vh inset instead of 5vw/5vh */
+                    top: "10vh",
+                    bottom: "10vh",
+                    left: "12vw",
+                    right: "12vw",
+                    opacity: borderOpacity,
+                    boxShadow: "0 0 0 1.5px rgba(255,255,255,0.55), 0 0 48px 6px rgba(255,255,255,0.12)",
+                    zIndex: 10,
+                    borderRadius: "1.5rem",
+                }}
+            />
+
             {/* Card surface */}
-            <div className="absolute inset-4 md:inset-8 rounded-2xl overflow-hidden bg-[#111] shadow-[0_32px_80px_rgba(0,0,0,0.35)]">
-                {/* Image */}
+            <motion.div
+                className="absolute overflow-hidden bg-[#0d0d0d]"
+                style={{
+                    top: "10vh",
+                    bottom: "10vh",
+                    left: "12vw",
+                    right: "12vw",
+                    filter: filterStyle,
+                    borderRadius: "1.5rem",
+                    boxShadow: "0 32px 96px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.3)",
+                }}
+            >
+                {/* Animated shimmer border */}
+                <motion.div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                        borderRadius: "1.5rem",
+                        zIndex: 12,
+                        opacity: borderOpacity,
+                    }}
+                >
+                    <div
+                        className="absolute inset-0"
+                        style={{
+                            borderRadius: "1.5rem",
+                            padding: "1px",
+                            background:
+                                "linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.2) 100%)",
+                            WebkitMask:
+                                "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                            WebkitMaskComposite: "xor",
+                            maskComposite: "exclude",
+                        }}
+                    />
+                </motion.div>
+
                 <Image
                     src={img.src}
                     alt={img.alt}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 90vw"
+                    sizes="76vw"
                     priority={index === 0}
                 />
 
-                {/* Bottom-to-top gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                {/* Dark scrim — stronger at bottom for readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/10" />
 
                 {/* Top row: label + year */}
-                <div className="absolute top-6 left-6 right-6 flex items-center justify-between">
+                <div className="absolute top-5 left-7 right-7 flex items-center justify-between">
                     {img.label && (
-                        <span className="font-mono text-[11px] tracking-[0.25em] text-white/40 uppercase">
+                        <span
+                            className="font-mono text-[10px] tracking-[0.28em] text-white/35 uppercase"
+                            style={{ letterSpacing: "0.28em" }}
+                        >
                             {img.label}
                         </span>
                     )}
                     {img.year && (
-                        <span className="font-mono text-[11px] tracking-[0.2em] text-white/30 uppercase">
+                        <span
+                            className="font-mono text-[10px] tracking-[0.22em] text-white/25 uppercase"
+                        >
                             {img.year}
                         </span>
                     )}
                 </div>
 
-                {/* Bottom meta */}
-                <div className="absolute bottom-6 left-6 right-6">
+                {/* Bottom: title + tag + description + progress */}
+                <div className="absolute bottom-6 left-7 right-7">
                     <div className="flex items-end justify-between gap-4">
-                        <div className="flex flex-col gap-1.5">
-                            <h3 className="text-white text-xl md:text-2xl font-semibold leading-tight tracking-tight">
+                        <div className="flex-1 min-w-0">
+                            <h3 className="text-white text-lg md:text-xl font-semibold tracking-tight leading-tight mb-1.5 truncate">
                                 {img.alt}
                             </h3>
                             {img.description && (
-                                <p className="text-white/50 text-sm leading-relaxed max-w-sm hidden md:block">
+                                <p className="text-white/45 text-xs leading-relaxed max-w-sm hidden md:block line-clamp-2">
                                     {img.description}
                                 </p>
                             )}
                         </div>
-
                         {img.tag && (
-                            <span className="shrink-0 text-[10px] font-semibold tracking-[0.18em] uppercase text-white px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 whitespace-nowrap">
+                            <span className="shrink-0 text-[9px] font-semibold tracking-[0.18em] uppercase text-white/90 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15">
                                 {img.tag}
                             </span>
                         )}
                     </div>
 
-                    {/* Progress dots */}
+                    {/* Progress pills */}
                     <div className="flex gap-1.5 mt-4">
                         {Array.from({ length: total }).map((_, j) => (
-                            <div
+                            <motion.div
                                 key={j}
-                                className={`h-0.5 rounded-full transition-all duration-300 ${j <= index
-                                    ? "bg-white w-6"
-                                    : "bg-white/25 w-3"
-                                    }`}
+                                className="h-[2px] rounded-full bg-white"
+                                animate={{
+                                    width: j <= index ? 28 : 12,
+                                    opacity: j <= index ? 1 : 0.22,
+                                }}
+                                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                             />
                         ))}
                     </div>
                 </div>
-            </div>
+            </motion.div>
         </motion.div>
     );
 }
