@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import * as Accordion from "@radix-ui/react-accordion";
 import { Plus } from "lucide-react";
+import ScrollTextReveal from "@/components/ScrollTextReveal";
 
 const faqs = [
   { question: "What types of projects do you specialize in?", answer: "We specialize in web and mobile app development, video production, digital marketing campaigns, graphic design, and UI/UX design. We work with startups, SMEs, and enterprise clients across various industries." },
@@ -26,9 +27,12 @@ export default function FAQ() {
             <span className="text-xs text-[#888] font-medium uppercase tracking-widest">FAQ</span>
           </motion.div>
 
-          <motion.h2 initial={{ opacity: 0, y: 30 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.1 }} className="text-4xl sm:text-5xl font-bold text-[#1a1a1a] tracking-tight">
-            Common <span className="font-serif italic text-[#888]">Questions</span>
-          </motion.h2>
+          <ScrollTextReveal
+            text="Common Questions"
+            variant="color"
+            className="text-4xl sm:text-5xl font-bold text-[#1a1a1a] tracking-tight"
+            as="h2"
+          />
         </div>
 
         <motion.div initial={{ opacity: 0, y: 30 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: 0.3 }}>

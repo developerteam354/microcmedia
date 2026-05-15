@@ -72,30 +72,25 @@ export default function Work() {
             <div className="flex flex-wrap justify-center items-baseline gap-x-[0.3em] mb-6">
               <ScrollTextReveal
                 text="Things we've"
-                variant="slide"
+                variant="color"
                 className="text-4xl sm:text-5xl md:text-[3.75rem] font-bold text-[#1a1a1a] tracking-tight leading-[1.1]"
                 as="h2"
-                delay={0.05}
               />
               <ScrollTextReveal
                 text="built"
-                variant="slide"
+                variant="color"
                 serif
                 className="text-4xl sm:text-5xl md:text-[3.75rem] tracking-tight leading-[1.1]"
                 as="h2"
-                delay={0.22}
               />
             </div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={titleInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.65, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[#888] text-lg max-w-lg mx-auto leading-relaxed"
-            >
-              A curated selection of projects spanning product design,
-              development, and brand storytelling.
-            </motion.p>
+            <ScrollTextReveal
+              text="A curated selection of projects spanning product design, development, and brand storytelling."
+              variant="color"
+              className="text-[#1a1a1a] text-lg max-w-lg mx-auto leading-relaxed"
+              as="p"
+            />
           </div>
         </div>
       </div>

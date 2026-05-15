@@ -33,42 +33,36 @@ export default function About() {
               <span className="text-xs text-[#888] font-medium uppercase tracking-widest">About Us</span>
             </motion.div>
 
-            {/* ── ScrollTextReveal heading ── */}
+            {/* ── Headings ── */}
             <div className="mb-6">
               <ScrollTextReveal
                 text="We Build Brands That"
-                variant="slide"
+                variant="color"
                 className="text-4xl sm:text-5xl font-bold text-[#1a1a1a] tracking-tight leading-tight"
                 as="h2"
-                delay={0.1}
               />
               <ScrollTextReveal
                 text="Stand Out"
-                variant="slide"
+                variant="color"
                 serif
                 className="text-4xl sm:text-5xl font-bold tracking-tight leading-tight"
                 as="h2"
-                delay={0.35}
               />
             </div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-[#666] text-lg leading-relaxed mb-6"
-            >
-              Micro C Media is a full-service creative agency born from a passion for exceptional digital experiences. We combine strategic thinking with creative execution.
-            </motion.p>
+            <ScrollTextReveal
+              text="Micro C Media is a full-service creative agency born from a passion for exceptional digital experiences. We combine strategic thinking with creative execution."
+              variant="color"
+              className="text-[#1a1a1a] text-lg leading-relaxed mb-6"
+              as="p"
+            />
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="text-[#999] leading-relaxed mb-10"
-            >
-              From startups to established enterprises, we partner with ambitious brands to craft digital solutions that drive growth and create lasting impact.
-            </motion.p>
+            <ScrollTextReveal
+              text="From startups to established enterprises, we partner with ambitious brands to craft digital solutions that drive growth and create lasting impact."
+              variant="color"
+              className="text-[#1a1a1a] leading-relaxed mb-10"
+              as="p"
+            />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {values.map((value, i) => (

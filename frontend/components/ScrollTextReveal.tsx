@@ -1,105 +1,144 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useScroll, useTransform, useInView, useSpring } from "framer-motion";
 
 interface ScrollTextRevealProps {
-    text: string;
-    className?: string;
-    /** How early to trigger before element enters view (default "-80px") */
-    margin?: string;
-    /** Initial delay before first word animates (in seconds, default 0) */
-    delay?: number;
-    /**
-     * "slide"  — word slides up from a clip mask (cinematic, closest to video)
-     * "fade"   — word fades + floats up (matches your Hero style)
-     * "blur"   — word unblurs into focus
-     */
-    variant?: "slide" | "fade" | "blur";
-    /** Render each word in serif italic (matches your existing italic accent words) */
-    serif?: boolean;
-    as?: keyof JSX.IntrinsicElements;
+  text: string;
+  variant?: "slide" | "color";
+  className?: string;
+  as?: "h1" | "h2" | "h3" | "h4" | "p" | "span";
+  delay?: number;
+  serif?: boolean;
+  activeColor?: string;
+  mutedColor?: string;
 }
 
-const makeVariants = (delay: number) => ({
-    slide: {
-        hidden: { y: "105%", opacity: 0 },
-        visible: (i: number) => ({
-            y: "0%",
-            opacity: 1,
-            transition: {
-                duration: 0.75,
-                ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-                delay: delay + i * 0.055,
-            },
-        }),
-    },
-    fade: {
-        hidden: { opacity: 0, y: 32 },
-        visible: (i: number) => ({
-            opacity: 1,
-            y: 0,
-            transition: {
-                duration: 0.7,
-                ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-                delay: delay + i * 0.055,
-            },
-        }),
-    },
-    blur: {
-        hidden: { opacity: 0, filter: "blur(10px)", scale: 1.06 },
-        visible: (i: number) => ({
-            opacity: 1,
-            filter: "blur(0px)",
-            scale: 1,
-            transition: {
-                duration: 0.8,
-                ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-                delay: delay + i * 0.055,
-            },
-        }),
-    },
-});
-
 export default function ScrollTextReveal({
-    text,
-    className = "",
-    margin = "-80px",
-    variant = "slide",
-    serif = false,
-    delay = 0,
-    as: Tag = "p",
+  text,
+  variant = "color", // Changed default to "color" as per user's "all content" request
+  className = "",
+  as: Component = "h2",
+  delay = 0,
+  serif = false,
+  activeColor = "#000000", // Pure black as requested
+  mutedColor = "#a3a3a3", // Neutral grey as requested
 }: ScrollTextRevealProps) {
-    const ref = useRef<HTMLElement>(null);
-    const isInView = useInView(ref as any, { once: true, margin: margin as any });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-10%" });
 
-    const words = text.split(" ");
-    const variants = makeVariants(delay);
-    const vari = variants[variant];
-
+  if (variant === "color") {
     return (
-        // @ts-ignore — dynamic tag
-        <Tag
-            ref={ref}
-            className={`flex flex-wrap gap-x-[0.28em] overflow-visible ${className}`}
-        >
-            {words.map((word, i) => (
-                <span
-                    key={i}
-                    className="inline-block overflow-hidden leading-[1.15]"
-                >
-                    <motion.span
-                        className={`inline-block leading-[1.15] ${serif ? "font-serif italic text-[#888]" : ""
-                            }`}
-                        custom={i}
-                        variants={vari}
-                        initial="hidden"
-                        animate={isInView ? "visible" : "hidden"}
-                    >
-                        {word}
-                    </motion.span>
-                </span>
-            ))}
-        </Tag>
+      <Component
+        ref={containerRef}
+        className={`${className} ${serif ? "font-serif italic" : ""}`}
+      >
+        <ColorReveal text={text} activeColor={activeColor} mutedColor={mutedColor} />
+      </Component>
     );
+  }
+
+  // "slide" variant
+  const words = text.split(" ");
+
+  return (
+    <Component
+      ref={containerRef}
+      className={`${className} ${serif ? "font-serif italic" : ""}`}
+    >
+      {words.map((word, i) => (
+        <span key={i} className="inline-block overflow-hidden mr-[0.25em] pb-[0.1em] -mb-[0.1em]">
+          <motion.span
+            initial={{ y: "100%" }}
+            animate={isInView ? { y: 0 } : { y: "100%" }}
+            transition={{
+              duration: 0.9,
+              delay: delay + i * 0.04,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="inline-block"
+          >
+            {word}
+          </motion.span>
+        </span>
+      ))}
+    </Component>
+  );
+}
+
+function ColorReveal({ 
+  text, 
+  activeColor, 
+  mutedColor 
+}: { 
+  text: string; 
+  activeColor: string; 
+  mutedColor: string;
+}) {
+  const targetRef = useRef<HTMLSpanElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start 92%", "start 40%"],
+  });
+
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
+  const words = text.split(" ");
+
+  return (
+    <span ref={targetRef} className="relative inline-block">
+      {words.map((word, i) => {
+        const start = i / words.length;
+        const end = Math.min(1, (i + 1.5) / words.length);
+        
+        return (
+          <Word 
+            key={i} 
+            progress={smoothProgress} 
+            range={[start, end]} 
+            activeColor={activeColor} 
+            mutedColor={mutedColor}
+          >
+            {word}
+          </Word>
+        );
+      })}
+    </span>
+  );
+}
+
+function Word({ 
+  children, 
+  progress, 
+  range, 
+  activeColor, 
+  mutedColor 
+}: { 
+  children: string; 
+  progress: any; 
+  range: [number, number];
+  activeColor: string;
+  mutedColor: string;
+}) {
+  const opacity = useTransform(progress, range, [0.25, 1]); // Start at 25% opacity (grey) to 100% (black)
+  
+  return (
+    <span className="relative inline-block mr-[0.25em]">
+      {/* Background layer (always grey) */}
+      <span 
+        className="absolute inset-0 pointer-events-none select-none" 
+        style={{ color: mutedColor, opacity: 0.25 }}
+      >
+        {children}
+      </span>
+      {/* Active layer (transitions to black) */}
+      <motion.span style={{ opacity, color: activeColor }} className="relative inline-block">
+        {children}
+      </motion.span>
+    </span>
+  );
 }

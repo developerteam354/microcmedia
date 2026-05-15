@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { Send, Mail, MapPin, Phone, ArrowRight } from "lucide-react";
+import ScrollTextReveal from "@/components/ScrollTextReveal";
 
 export default function Contact() {
   const ref = useRef<HTMLDivElement>(null);
@@ -27,13 +28,19 @@ export default function Contact() {
             <span className="text-xs text-[#888] font-medium uppercase tracking-widest">Contact</span>
           </motion.div>
 
-          <motion.h2 initial={{ opacity: 0, y: 30 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.1 }} className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#1a1a1a] mb-5 tracking-tight">
-            Let&apos;s Build Something{" "}<span className="font-serif italic text-[#888]">Amazing</span>
-          </motion.h2>
+          <ScrollTextReveal
+            text="Let's Build Something Amazing"
+            variant="color"
+            className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#1a1a1a] mb-5 tracking-tight"
+            as="h2"
+          />
 
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.2 }} className="text-[#888] text-lg max-w-xl mx-auto">
-            Ready to elevate your brand? Let&apos;s start a conversation.
-          </motion.p>
+          <ScrollTextReveal
+            text="Ready to elevate your brand? Let's start a conversation."
+            variant="color"
+            className="text-[#1a1a1a] text-lg max-w-xl mx-auto"
+            as="p"
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">

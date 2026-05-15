@@ -152,34 +152,29 @@ export default function Services() {
             </span>
           </motion.div>
 
-          {/* ── ScrollTextReveal heading ── */}
+          {/* ── Headings ── */}
           <div className="flex flex-wrap justify-center gap-x-[0.28em] mb-5">
             <ScrollTextReveal
               text="Our"
-              variant="slide"
+              variant="color"
               className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#1a1a1a] tracking-tight"
               as="h2"
-              delay={0.1}
             />
             <ScrollTextReveal
               text="Services"
-              variant="slide"
+              variant="color"
               serif
               className="text-4xl sm:text-5xl md:text-6xl tracking-tight"
               as="h2"
-              delay={0.2}
             />
           </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={titleInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-[#888] text-lg max-w-xl mx-auto"
-          >
-            End-to-end creative solutions that elevate your brand and drive
-            real business results.
-          </motion.p>
+          <ScrollTextReveal
+            text="End-to-end creative solutions that elevate your brand and drive meaningful results."
+            variant="color"
+            className="text-[#1a1a1a] text-lg max-w-xl mx-auto"
+            as="p"
+          />
         </div>
 
         {/* Services grid */}

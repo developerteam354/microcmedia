@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Quote, ChevronLeft, ChevronRight, Star } from "lucide-react";
+import ScrollTextReveal from "@/components/ScrollTextReveal";
 
 const testimonials = [
   { name: "Sarah Chen", role: "CEO, TechVenture", avatar: "SC", color: "#7c3aed", rating: 5, text: "Micro C Media completely transformed our digital presence. The team's attention to detail and creative vision exceeded every expectation. Our conversion rate increased by 280%." },
@@ -28,9 +29,12 @@ export default function Testimonials() {
             <span className="text-xs text-[#888] font-medium uppercase tracking-widest">Testimonials</span>
           </motion.div>
 
-          <motion.h2 initial={{ opacity: 0, y: 30 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.1 }} className="text-4xl sm:text-5xl font-bold text-[#1a1a1a] tracking-tight">
-            What Our <span className="font-serif italic text-[#888]">Clients Say</span>
-          </motion.h2>
+          <ScrollTextReveal
+            text="What Our Clients Say"
+            variant="color"
+            className="text-4xl sm:text-5xl font-bold text-[#1a1a1a] tracking-tight"
+            as="h2"
+          />
         </div>
 
         <motion.div initial={{ opacity: 0, y: 40 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: 0.3 }} className="relative">

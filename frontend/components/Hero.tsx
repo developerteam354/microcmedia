@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import ScrollTextReveal from "@/components/ScrollTextReveal";
 
 const heroWords = [
   { text: "Crafting", italic: false },
@@ -141,15 +142,12 @@ export default function Hero() {
         </motion.h1>
 
         {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-          className="text-base sm:text-lg md:text-xl text-[#888] max-w-2xl mx-auto mb-12 leading-relaxed"
-        >
-          We transform ideas into stunning digital realities through innovative
-          design, development, and marketing strategies.
-        </motion.p>
+        <ScrollTextReveal
+          text="We transform ideas into stunning digital realities through innovative design, development, and marketing strategies."
+          variant="color"
+          className="text-base sm:text-lg md:text-xl text-[#1a1a1a] max-w-2xl mx-auto mb-12 leading-relaxed"
+          as="p"
+        />
 
         {/* CTA Buttons */}
         <motion.div
@@ -227,7 +225,6 @@ export default function Hero() {
           </div>
         </motion.div>
 
-        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
