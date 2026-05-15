@@ -19,9 +19,9 @@ const services = [
     description:
       "We build blazing-fast, scalable web and mobile applications using cutting-edge technologies. From MVPs to enterprise platforms.",
     tags: ["React", "Next.js", "Node.js", "Mobile"],
-    iconBg: "bg-violet-50",
-    iconColor: "text-violet-600",
-    hoverBorder: "hover:border-violet-200",
+    iconBg: "bg-[var(--surface-soft)]",
+    iconColor: "text-[var(--foreground)]",
+    hoverBorder: "hover:border-[var(--border-strong)]",
   },
   {
     icon: Video,
@@ -29,9 +29,9 @@ const services = [
     description:
       "Cinematic storytelling through professional video production, motion graphics, and post-production editing that captivates audiences.",
     tags: ["Cinematography", "Motion Graphics", "Color Grading"],
-    iconBg: "bg-rose-50",
-    iconColor: "text-rose-600",
-    hoverBorder: "hover:border-rose-200",
+    iconBg: "bg-[var(--surface-soft)]",
+    iconColor: "text-[var(--foreground)]",
+    hoverBorder: "hover:border-[var(--border-strong)]",
   },
   {
     icon: TrendingUp,
@@ -39,9 +39,9 @@ const services = [
     description:
       "Data-driven marketing strategies that grow your brand, increase conversions, and deliver measurable ROI across all digital channels.",
     tags: ["SEO", "Social Media", "PPC", "Analytics"],
-    iconBg: "bg-emerald-50",
-    iconColor: "text-emerald-600",
-    hoverBorder: "hover:border-emerald-200",
+    iconBg: "bg-[var(--surface-soft)]",
+    iconColor: "text-[var(--foreground)]",
+    hoverBorder: "hover:border-[var(--border-strong)]",
   },
   {
     icon: Palette,
@@ -49,9 +49,9 @@ const services = [
     description:
       "Visually striking designs that communicate your brand story. From print collateral to digital assets that leave a lasting impression.",
     tags: ["Branding", "Print", "Digital Assets", "Illustration"],
-    iconBg: "bg-amber-50",
-    iconColor: "text-amber-600",
-    hoverBorder: "hover:border-amber-200",
+    iconBg: "bg-[var(--surface-soft)]",
+    iconColor: "text-[var(--foreground)]",
+    hoverBorder: "hover:border-[var(--border-strong)]",
   },
   {
     icon: Layers,
@@ -59,9 +59,9 @@ const services = [
     description:
       "Human-centered design that transforms complex problems into intuitive, beautiful interfaces. Research-backed, pixel-perfect execution.",
     tags: ["Figma", "Prototyping", "User Research", "Design Systems"],
-    iconBg: "bg-blue-50",
-    iconColor: "text-blue-600",
-    hoverBorder: "hover:border-blue-200",
+    iconBg: "bg-[var(--surface-soft)]",
+    iconColor: "text-[var(--foreground)]",
+    hoverBorder: "hover:border-[var(--border-strong)]",
   },
 ];
 
@@ -86,7 +86,7 @@ function ServiceCard({
         ease: [0.22, 1, 0.36, 1],
       }}
       data-cursor-hover
-      className={`group relative rounded-2xl bg-white border border-black/[0.06] ${service.hoverBorder} transition-all duration-500 p-7 overflow-hidden cursor-pointer hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-1`}
+      className={`group relative rounded-2xl bg-[var(--surface)] border border-[var(--border)] ${service.hoverBorder} transition-all duration-500 p-7 overflow-hidden cursor-pointer hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-1`}
     >
       <div className="relative z-10">
         {/* Icon */}
@@ -97,12 +97,12 @@ function ServiceCard({
         </div>
 
         {/* Title */}
-        <h3 className="text-lg font-semibold text-[#1a1a1a] mb-3">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-3">
           {service.title}
         </h3>
 
         {/* Description */}
-        <p className="text-sm text-[#888] leading-relaxed mb-5 group-hover:text-[#666] transition-colors">
+        <p className="text-sm text-[var(--text-muted)] leading-relaxed mb-5 group-hover:text-[var(--foreground)] transition-colors">
           {service.description}
         </p>
 
@@ -111,7 +111,7 @@ function ServiceCard({
           {service.tags.map((tag) => (
             <span
               key={tag}
-              className="text-xs px-3 py-1 rounded-full bg-[#f8f7f4] text-[#888] border border-black/[0.04] group-hover:border-black/[0.08] transition-all"
+              className="text-xs px-3 py-1 rounded-full bg-[var(--surface-soft)] text-[var(--text-muted)] border border-[var(--border)] group-hover:border-[var(--border-strong)] transition-all"
             >
               {tag}
             </span>
@@ -119,7 +119,7 @@ function ServiceCard({
         </div>
 
         {/* Arrow */}
-        <div className="flex items-center gap-2 text-sm text-[#aaa] group-hover:text-[#1a1a1a] transition-colors">
+        <div className="flex items-center gap-2 text-sm text-[var(--text-soft)] group-hover:text-[var(--foreground)] transition-colors">
           <span>Learn more</span>
           <ArrowUpRight
             size={16}
@@ -144,10 +144,10 @@ export default function Services() {
             initial={{ opacity: 0, y: 20 }}
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-black/[0.06] shadow-sm mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--surface)] border border-[var(--border)] shadow-sm mb-6"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
-            <span className="text-xs text-[#888] font-medium uppercase tracking-widest">
+            <span className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-widest">
               What We Do
             </span>
           </motion.div>
@@ -157,7 +157,7 @@ export default function Services() {
             <ScrollTextReveal
               text="Our"
               variant="color"
-              className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#1a1a1a] tracking-tight"
+              className="text-4xl sm:text-5xl md:text-6xl font-bold text-[var(--foreground)] tracking-tight"
               as="h2"
             />
             <ScrollTextReveal
@@ -172,7 +172,7 @@ export default function Services() {
           <ScrollTextReveal
             text="End-to-end creative solutions that elevate your brand and drive meaningful results."
             variant="color"
-            className="text-[#1a1a1a] text-lg max-w-xl mx-auto"
+            className="text-[var(--foreground)] text-lg max-w-xl mx-auto"
             as="p"
           />
         </div>

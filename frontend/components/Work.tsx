@@ -52,18 +52,18 @@ export default function Work() {
   return (
     <section id="work" className="relative">
       {/* ── Section header — normal flow, full padding ── */}
-      <div className="py-28 px-6">
+      <div className="py-20 px-6 md:py-28">
         <div className="max-w-7xl mx-auto">
-          <div ref={titleRef} className="text-center mb-20">
+          <div ref={titleRef} className="text-center mb-12 md:mb-20">
             {/* Eyebrow pill */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={titleInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-black/[0.07] shadow-sm mb-8"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--surface)] border border-[var(--border)] shadow-sm mb-8"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs text-[#888] font-medium uppercase tracking-[0.14em]">
+              <span className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-[0.14em]">
                 Selected work
               </span>
             </motion.div>
@@ -73,7 +73,7 @@ export default function Work() {
               <ScrollTextReveal
                 text="Things we've"
                 variant="color"
-                className="text-4xl sm:text-5xl md:text-[3.75rem] font-bold text-[#1a1a1a] tracking-tight leading-[1.1]"
+                className="text-4xl sm:text-5xl md:text-[3.75rem] font-bold text-[var(--foreground)] tracking-tight leading-[1.1]"
                 as="h2"
               />
               <ScrollTextReveal
@@ -88,7 +88,7 @@ export default function Work() {
             <ScrollTextReveal
               text="A curated selection of projects spanning product design, development, and brand storytelling."
               variant="color"
-              className="text-[#1a1a1a] text-lg max-w-lg mx-auto leading-relaxed"
+              className="text-[var(--foreground)] text-lg max-w-lg mx-auto leading-relaxed"
               as="p"
             />
           </div>
@@ -104,7 +104,7 @@ export default function Work() {
       <StickyImageStack images={projects} slotHeight={100} />
 
       {/* ── CTA — normal flow, sits below the sticky section ── */}
-      <div className="py-20 px-6">
+      <div className="py-14 px-6 md:py-20">
         <div className="max-w-7xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -115,11 +115,11 @@ export default function Work() {
             <a
               href="#contact"
               data-cursor-hover
-              className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-[#1a1a1a] text-white text-sm font-medium hover:bg-[#333] transition-colors duration-300 shadow-lg shadow-black/10"
+              className="group inline-flex items-center gap-3 px-7 py-3.5 rounded-full bg-[var(--button-bg)] text-[var(--button-fg)] text-sm font-medium hover:bg-[var(--button-hover)] transition-colors duration-300 shadow-lg shadow-black/10"
             >
               Start a project
               <span className="w-5 h-5 rounded-full bg-white/15 flex items-center justify-center group-hover:bg-white/25 transition-colors">
-                <ArrowUpRight size={11} className="text-white" />
+                <ArrowUpRight size={11} className="text-[var(--button-fg)]" />
               </span>
             </a>
           </motion.div>

@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // @ts-ignore
     qualities: [75, 100],          // fixes the /logo.png quality warning
     remotePatterns: [
       {

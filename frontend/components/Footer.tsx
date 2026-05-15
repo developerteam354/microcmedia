@@ -9,8 +9,8 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="relative pt-20 pb-10 px-6 overflow-hidden border-t border-black/[0.06]">
-      <div className="absolute inset-0 bg-gradient-to-t from-[#f0ede6]/50 to-transparent pointer-events-none" />
+    <footer className="relative pt-20 pb-10 px-6 overflow-hidden border-t border-[var(--border)]">
+      <div className="absolute inset-0 bg-gradient-to-t from-[var(--surface-soft)]/50 to-transparent pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
@@ -27,11 +27,11 @@ export default function Footer() {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <span className="font-bold text-[#1a1a1a] tracking-tight text-lg">
-                Micro C <span className="text-[#7c3aed]">Media</span>
+              <span className="font-bold text-[var(--foreground)] tracking-tight text-lg">
+                Micro C <span className="text-[var(--text-muted)]">Media</span>
               </span>
             </div>
-            <p className="text-sm text-[#999] leading-relaxed max-w-xs mb-6">
+            <p className="text-sm text-[var(--text-muted)] leading-relaxed max-w-xs mb-6">
               A premium creative agency crafting digital experiences that
               inspire, engage, and convert.
             </p>
@@ -41,7 +41,7 @@ export default function Footer() {
                   key={s}
                   href="#"
                   data-cursor-hover
-                  className="w-9 h-9 rounded-lg bg-[#f8f7f4] border border-black/[0.06] flex items-center justify-center text-xs text-[#999] hover:text-[#1a1a1a] hover:border-black/[0.12] transition-all"
+                  className="w-9 h-9 rounded-lg bg-[var(--surface-soft)] border border-[var(--border)] flex items-center justify-center text-xs text-[var(--text-muted)] hover:text-[var(--foreground)] hover:border-[var(--border-strong)] transition-all"
                 >
                   {s}
                 </a>
@@ -52,7 +52,7 @@ export default function Footer() {
           {/* Links */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h4 className="text-xs font-semibold text-[#1a1a1a] uppercase tracking-widest mb-5">
+              <h4 className="text-xs font-semibold text-[var(--foreground)] uppercase tracking-widest mb-5">
                 {category}
               </h4>
               <ul className="space-y-3">
@@ -60,7 +60,7 @@ export default function Footer() {
                   <li key={link}>
                     <a
                       href="#"
-                      className="text-sm text-[#999] hover:text-[#1a1a1a] transition-colors"
+                      className="text-sm text-[var(--text-muted)] hover:text-[var(--foreground)] transition-colors"
                     >
                       {link}
                     </a>
@@ -72,11 +72,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-black/[0.06]">
-          <p className="text-xs text-[#bbb]">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-[var(--border)]">
+          <p className="text-xs text-[var(--text-soft)]">
             © {new Date().getFullYear()} Micro C Media. All rights reserved.
           </p>
-          <p className="text-xs text-[#bbb]">
+          <p className="text-xs text-[var(--text-soft)]">
             Crafted with{" "}
             <span className="text-rose-400">♥</span> by Micro C Media
           </p>

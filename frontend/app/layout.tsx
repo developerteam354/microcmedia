@@ -28,6 +28,19 @@ export const metadata: Metadata = {
   ],
 };
 
+const themeScript = `
+  (() => {
+    try {
+      const stored = localStorage.getItem("microc-theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = stored || (prefersDark ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    } catch {
+      document.documentElement.dataset.theme = "light";
+    }
+  })();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,8 +50,10 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-[#f8f7f4] text-[#1a1a1a]">
+      <body className="min-h-full flex flex-col bg-[var(--background)] text-[var(--foreground)]">
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <SmoothScroll>
           {children}
         </SmoothScroll>

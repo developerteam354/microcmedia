@@ -1,9 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import ScrollTextReveal from "@/components/ScrollTextReveal";
+import AntigravityBackground from "@/components/AntigravityBackground";
 
 const heroWords = [
   { text: "Crafting", italic: false },
@@ -14,6 +14,10 @@ const heroWords = [
 ];
 
 const rotatingWords = ["inspire", "convert", "delight", "elevate", "captivate"];
+const subtitleText =
+  "We transform ideas into stunning digital realities through innovative design, development, and marketing strategies.";
+const subtitleWords = subtitleText.split(" ");
+const smoothEase = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   const [currentWord, setCurrentWord] = useState(0);
@@ -25,7 +29,7 @@ export default function Hero() {
     return () => clearInterval(interval);
   }, []);
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: {},
     visible: {
       transition: {
@@ -35,7 +39,7 @@ export default function Hero() {
     },
   };
 
-  const wordVariants = {
+  const wordVariants: Variants = {
     hidden: { opacity: 0, y: 60, rotateX: -40 },
     visible: {
       opacity: 1,
@@ -43,7 +47,30 @@ export default function Hero() {
       rotateX: 0,
       transition: {
         duration: 0.9,
-        ease: [0.22, 1, 0.36, 1],
+        ease: smoothEase,
+      },
+    },
+  };
+
+  const subtitleVariants: Variants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.035,
+        delayChildren: 1.05,
+      },
+    },
+  };
+
+  const subtitleWordVariants: Variants = {
+    hidden: { opacity: 0, y: 18, filter: "blur(6px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: {
+        duration: 0.55,
+        ease: smoothEase,
       },
     },
   };
@@ -54,29 +81,9 @@ export default function Hero() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       {/* Subtle warm gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#f8f7f4] via-[#f5f3ee] to-[#f8f7f4] pointer-events-none" />
+      <div className="absolute inset-0 bg-[var(--hero-gradient)] pointer-events-none" />
 
-      {/* Decorative floating shapes */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Soft warm circle */}
-        <motion.div
-          animate={{
-            y: [0, -30, 0],
-            x: [0, 20, 0],
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[15%] right-[15%] w-72 h-72 bg-gradient-to-br from-amber-100/40 to-orange-50/20 rounded-full blur-[80px]"
-        />
-        {/* Subtle blue circle */}
-        <motion.div
-          animate={{
-            y: [0, 25, 0],
-            x: [0, -15, 0],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[20%] left-[10%] w-96 h-96 bg-gradient-to-br from-blue-50/30 to-indigo-50/10 rounded-full blur-[100px]"
-        />
-      </div>
+      <AntigravityBackground className="[mask-image:radial-gradient(circle_at_center,black_0%,black_62%,transparent_90%)]" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 pt-20 pb-10 text-center">
         {/* Badge */}
@@ -84,10 +91,10 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-black/[0.06] shadow-sm mb-10"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--surface)] border border-[var(--border)] shadow-sm mb-10"
         >
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs text-[#888] font-medium">
+          <span className="text-xs text-[var(--text-muted)] font-medium">
             Premium Creative Agency
           </span>
         </motion.div>
@@ -116,7 +123,7 @@ export default function Hero() {
                       animate={{ y: 0, opacity: 1 }}
                       exit={{ y: -40, opacity: 0 }}
                       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                      className="font-serif italic text-[#888] inline-block"
+                      className="font-serif italic text-[var(--text-muted)] inline-block"
                     >
                       {rotatingWords[currentWord]}
                     </motion.span>
@@ -132,9 +139,9 @@ export default function Hero() {
                 className="inline-block mr-3 md:mr-5"
               >
                 {word.italic ? (
-                  <span className="font-serif italic text-[#888]">{word.text}</span>
+                  <span className="font-serif italic text-[var(--text-muted)]">{word.text}</span>
                 ) : (
-                  <span className="text-[#1a1a1a]">{word.text}</span>
+                  <span className="text-[var(--foreground)]">{word.text}</span>
                 )}
               </motion.span>
             );
@@ -142,24 +149,34 @@ export default function Hero() {
         </motion.h1>
 
         {/* Subtitle */}
-        <ScrollTextReveal
-          text="We transform ideas into stunning digital realities through innovative design, development, and marketing strategies."
-          variant="color"
-          className="text-base sm:text-lg md:text-xl text-[#1a1a1a] max-w-2xl mx-auto mb-12 leading-relaxed"
-          as="p"
-        />
+        <motion.p
+          variants={subtitleVariants}
+          initial="hidden"
+          animate="visible"
+          className="text-base sm:text-lg md:text-xl text-[var(--foreground)] max-w-2xl mx-auto mb-12 leading-relaxed"
+        >
+          {subtitleWords.map((word, index) => (
+            <motion.span
+              key={`${word}-${index}`}
+              variants={subtitleWordVariants}
+              className="inline-block mr-[0.25em]"
+            >
+              {word}
+            </motion.span>
+          ))}
+        </motion.p>
 
         {/* CTA Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.5, duration: 0.8 }}
+          transition={{ delay: 1.75, duration: 0.8 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
           <a
             href="#services"
             data-cursor-hover
-            className="group relative flex items-center gap-3 px-8 py-4 rounded-full bg-[#1a1a1a] text-white font-medium overflow-hidden transition-all duration-300 hover:bg-[#333] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:scale-[1.02]"
+            className="group relative flex items-center gap-3 px-8 py-4 rounded-full bg-[var(--button-bg)] text-[var(--button-fg)] font-medium overflow-hidden transition-all duration-300 hover:bg-[var(--button-hover)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:scale-[1.02]"
           >
             <span className="relative z-10">Get Started</span>
             <span className="relative z-10 w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
@@ -173,13 +190,13 @@ export default function Hero() {
           <a
             href="#work"
             data-cursor-hover
-            className="group px-8 py-4 rounded-full bg-white border border-black/[0.08] text-[#1a1a1a] font-medium hover:border-black/20 transition-all duration-300 hover:shadow-lg"
+            className="group px-8 py-4 rounded-full bg-[var(--surface)] border border-[var(--border)] text-[var(--foreground)] font-medium hover:border-[var(--border-strong)] transition-all duration-300 hover:shadow-lg"
           >
             <span className="flex items-center gap-2">
               View Our Work
               <ArrowRight
                 size={16}
-                className="group-hover:translate-x-1 transition-transform text-[#888]"
+                className="group-hover:translate-x-1 transition-transform text-[var(--text-muted)]"
               />
             </span>
           </a>
@@ -195,11 +212,11 @@ export default function Hero() {
           <div className="flex items-center gap-4">
             {/* Avatar stack */}
             <div className="flex -space-x-2">
-              {["#7c3aed", "#3b82f6", "#ec4899", "#10b981"].map(
+              {["#111111", "#333333", "#555555", "#777777"].map(
                 (color, i) => (
                   <div
                     key={i}
-                    className="w-8 h-8 rounded-full border-2 border-[#f8f7f4] flex items-center justify-center text-[10px] font-bold text-white"
+                    className="w-8 h-8 rounded-full border-2 border-[var(--background)] flex items-center justify-center text-[10px] font-bold text-white"
                     style={{ background: color }}
                   >
                     {["S", "M", "P", "J"][i]}
@@ -219,8 +236,8 @@ export default function Hero() {
                 </svg>
               ))}
             </div>
-            <span className="text-sm text-[#888]">
-              Trusted by <strong className="text-[#1a1a1a]">200+</strong> clients
+            <span className="text-sm text-[var(--text-muted)]">
+              Trusted by <strong className="text-[var(--foreground)]">200+</strong> clients
             </span>
           </div>
         </motion.div>
@@ -234,12 +251,12 @@ export default function Hero() {
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="w-6 h-10 rounded-full border-2 border-[#1a1a1a]/15 flex items-start justify-center p-2"
+            className="w-6 h-10 rounded-full border-2 border-[var(--border)] flex items-start justify-center p-2"
           >
             <motion.div
               animate={{ opacity: [0, 1, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="w-1 h-2 bg-[#1a1a1a]/40 rounded-full"
+              className="w-1 h-2 bg-[var(--text-muted)] rounded-full"
             />
           </motion.div>
         </motion.div>

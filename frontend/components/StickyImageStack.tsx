@@ -23,9 +23,10 @@ export interface StackImage {
 interface StickyImageStackProps {
     images: StackImage[];
     className?: string;
+    slotHeight?: number;
 }
 
-export default function StickyImageStack({ images, className = "" }: StickyImageStackProps) {
+export default function StickyImageStack({ images, className = "", slotHeight = 100 }: StickyImageStackProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const n = images.length;
 
@@ -38,9 +39,9 @@ export default function StickyImageStack({ images, className = "" }: StickyImage
         <div
             ref={containerRef}
             className={`relative ${className}`}
-            style={{ height: `${n * 100}vh` }}
+            style={{ height: `${n * slotHeight}vh` }}
         >
-            <div className="sticky top-0 overflow-hidden" style={{ height: "100vh" }}>
+            <div className="sticky top-0 overflow-hidden" style={{ height: "100svh" }}>
                 {images.map((img, i) => (
                     <StackCard
                         key={i}
@@ -149,38 +150,26 @@ function StackCard({
         >
             {/* Outer glow ring — animate opacity */}
             <motion.div
-                className="absolute rounded-3xl pointer-events-none"
+                className="absolute left-4 right-4 top-[18svh] bottom-[18svh] rounded-2xl pointer-events-none sm:left-8 sm:right-8 md:left-[12vw] md:right-[12vw] md:top-[10vh] md:bottom-[10vh] md:rounded-3xl"
                 style={{
-                    /* Smaller card: 10vw/12vh inset instead of 5vw/5vh */
-                    top: "10vh",
-                    bottom: "10vh",
-                    left: "12vw",
-                    right: "12vw",
                     opacity: borderOpacity,
                     boxShadow: "0 0 0 1.5px rgba(255,255,255,0.55), 0 0 48px 6px rgba(255,255,255,0.12)",
                     zIndex: 10,
-                    borderRadius: "1.5rem",
                 }}
             />
 
             {/* Card surface */}
             <motion.div
-                className="absolute overflow-hidden bg-[#0d0d0d]"
+                className="absolute left-4 right-4 top-[18svh] bottom-[18svh] overflow-hidden rounded-2xl bg-[#0d0d0d] sm:left-8 sm:right-8 md:left-[12vw] md:right-[12vw] md:top-[10vh] md:bottom-[10vh] md:rounded-3xl"
                 style={{
-                    top: "10vh",
-                    bottom: "10vh",
-                    left: "12vw",
-                    right: "12vw",
                     filter: filterStyle,
-                    borderRadius: "1.5rem",
-                    boxShadow: "0 32px 96px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.3)",
+                    boxShadow: "0 22px 70px rgba(0,0,0,0.48), 0 4px 16px rgba(0,0,0,0.28)",
                 }}
             >
                 {/* Animated shimmer border */}
                 <motion.div
-                    className="absolute inset-0 pointer-events-none"
+                    className="absolute inset-0 rounded-2xl pointer-events-none md:rounded-3xl"
                     style={{
-                        borderRadius: "1.5rem",
                         zIndex: 12,
                         opacity: borderOpacity,
                     }}
@@ -205,7 +194,7 @@ function StackCard({
                     alt={img.alt}
                     fill
                     className="object-cover"
-                    sizes="76vw"
+                    sizes="(max-width: 640px) 92vw, (max-width: 768px) 84vw, 76vw"
                     priority={index === 0}
                 />
 
@@ -213,7 +202,7 @@ function StackCard({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/10" />
 
                 {/* Top row: label + year */}
-                <div className="absolute top-5 left-7 right-7 flex items-center justify-between">
+                <div className="absolute top-4 left-4 right-4 flex items-center justify-between md:top-5 md:left-7 md:right-7">
                     {img.label && (
                         <span
                             className="font-mono text-[10px] tracking-[0.28em] text-white/35 uppercase"
@@ -232,10 +221,10 @@ function StackCard({
                 </div>
 
                 {/* Bottom: title + tag + description + progress */}
-                <div className="absolute bottom-6 left-7 right-7">
-                    <div className="flex items-end justify-between gap-4">
+                <div className="absolute bottom-4 left-4 right-4 md:bottom-6 md:left-7 md:right-7">
+                    <div className="flex flex-col items-start gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
                         <div className="flex-1 min-w-0">
-                            <h3 className="text-white text-lg md:text-xl font-semibold tracking-tight leading-tight mb-1.5 truncate">
+                            <h3 className="text-white text-base md:text-xl font-semibold tracking-tight leading-tight md:mb-1.5">
                                 {img.alt}
                             </h3>
                             {img.description && (
@@ -245,14 +234,14 @@ function StackCard({
                             )}
                         </div>
                         {img.tag && (
-                            <span className="shrink-0 text-[9px] font-semibold tracking-[0.18em] uppercase text-white/90 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15">
+                            <span className="shrink-0 text-[8px] md:text-[9px] font-semibold tracking-[0.16em] md:tracking-[0.18em] uppercase text-white/90 px-2.5 md:px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15">
                                 {img.tag}
                             </span>
                         )}
                     </div>
 
                     {/* Progress pills */}
-                    <div className="flex gap-1.5 mt-4">
+                    <div className="flex gap-1.5 mt-3 md:mt-4">
                         {Array.from({ length: total }).map((_, j) => (
                             <motion.div
                                 key={j}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform, useInView, useSpring } from "framer-motion";
+import { motion, MotionValue, useScroll, useTransform, useInView, useSpring } from "framer-motion";
 
 interface ScrollTextRevealProps {
   text: string;
@@ -21,8 +21,8 @@ export default function ScrollTextReveal({
   as: Component = "h2",
   delay = 0,
   serif = false,
-  activeColor = "#000000", // Pure black as requested
-  mutedColor = "#a3a3a3", // Neutral grey as requested
+  activeColor = "var(--foreground)",
+  mutedColor = "var(--text-soft)",
 }: ScrollTextRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-10%" });
@@ -119,12 +119,12 @@ function Word({
   mutedColor 
 }: { 
   children: string; 
-  progress: any; 
+  progress: MotionValue<number>; 
   range: [number, number];
   activeColor: string;
   mutedColor: string;
 }) {
-  const opacity = useTransform(progress, range, [0.25, 1]); // Start at 25% opacity (grey) to 100% (black)
+  const opacity = useTransform(progress, range, [0.25, 1]);
   
   return (
     <span className="relative inline-block mr-[0.25em]">

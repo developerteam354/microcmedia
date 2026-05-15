@@ -22,15 +22,15 @@ export default function FAQ() {
     <section className="py-28 px-6 relative overflow-hidden">
       <div className="max-w-3xl mx-auto" ref={ref}>
         <div className="text-center mb-14">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-black/[0.06] shadow-sm mb-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--surface)] border border-[var(--border)] shadow-sm mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-            <span className="text-xs text-[#888] font-medium uppercase tracking-widest">FAQ</span>
+            <span className="text-xs text-[var(--text-muted)] font-medium uppercase tracking-widest">FAQ</span>
           </motion.div>
 
           <ScrollTextReveal
             text="Common Questions"
             variant="color"
-            className="text-4xl sm:text-5xl font-bold text-[#1a1a1a] tracking-tight"
+            className="text-4xl sm:text-5xl font-bold text-[var(--foreground)] tracking-tight"
             as="h2"
           />
         </div>
@@ -38,15 +38,15 @@ export default function FAQ() {
         <motion.div initial={{ opacity: 0, y: 30 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: 0.3 }}>
           <Accordion.Root type="single" collapsible className="space-y-3">
             {faqs.map((faq, i) => (
-              <Accordion.Item key={i} value={`item-${i}`} className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden data-[state=open]:border-[#1a1a1a]/20 transition-all duration-300 data-[state=open]:shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
+              <Accordion.Item key={i} value={`item-${i}`} className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] overflow-hidden data-[state=open]:border-[var(--border-strong)] transition-all duration-300 data-[state=open]:shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
                 <Accordion.Header>
                   <Accordion.Trigger data-cursor-hover className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left group">
-                    <span className="text-sm md:text-base font-medium text-[#444] group-hover:text-[#1a1a1a] transition-colors">{faq.question}</span>
-                    <Plus size={18} className="text-[#aaa] shrink-0 group-data-[state=open]:rotate-45 transition-transform duration-300 group-hover:text-[#1a1a1a]" />
+                    <span className="text-sm md:text-base font-medium text-[var(--text-muted)] group-hover:text-[var(--foreground)] transition-colors">{faq.question}</span>
+                    <Plus size={18} className="text-[var(--text-soft)] shrink-0 group-data-[state=open]:rotate-45 transition-transform duration-300 group-hover:text-[var(--foreground)]" />
                   </Accordion.Trigger>
                 </Accordion.Header>
                 <Accordion.Content className="overflow-hidden data-[state=open]:animate-[slideDown_0.3s_ease] data-[state=closed]:animate-[slideUp_0.3s_ease]">
-                  <div className="px-6 pb-5 text-sm text-[#888] leading-relaxed border-t border-black/[0.04] pt-4">{faq.answer}</div>
+                  <div className="px-6 pb-5 text-sm text-[var(--text-muted)] leading-relaxed border-t border-[var(--border)] pt-4">{faq.answer}</div>
                 </Accordion.Content>
               </Accordion.Item>
             ))}
