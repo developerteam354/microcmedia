@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import {
   Code2,
   Video,
@@ -9,6 +9,8 @@ import {
   Palette,
   Layers,
   ArrowUpRight,
+  X,
+  CheckCircle2,
 } from "lucide-react";
 import ScrollTextReveal from "@/components/ScrollTextReveal";
 
@@ -68,16 +70,29 @@ const services = [
 function ServiceCard({
   service,
   index,
+  onClick,
 }: {
   service: (typeof services)[0];
   index: number;
+  onClick: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  
+  // Spotlight effect
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [opacity, setOpacity] = useState(0);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
 
   return (
     <motion.div
       ref={ref}
+      layoutId={`card-${service.title}`}
       initial={{ opacity: 0, y: 50 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{
@@ -85,9 +100,22 @@ function ServiceCard({
         delay: index * 0.1,
         ease: [0.22, 1, 0.36, 1],
       }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setOpacity(1)}
+      onMouseLeave={() => setOpacity(0)}
+      onClick={onClick}
       data-cursor-hover
-      className={`group relative rounded-2xl bg-[var(--surface)] border border-[var(--border)] ${service.hoverBorder} transition-all duration-500 p-7 overflow-hidden cursor-pointer hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-1`}
+      className={`group relative rounded-3xl bg-[var(--surface)] border border-[var(--border)] ${service.hoverBorder} transition-all duration-500 p-8 overflow-hidden cursor-pointer hover:shadow-[0_20px_50px_rgba(139,92,246,0.1)] dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:-translate-y-1`}
     >
+      {/* Spotlight overlay */}
+      <div
+        className="pointer-events-none absolute -inset-px transition duration-300 z-0"
+        style={{
+          opacity,
+          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(139, 92, 246, 0.1), transparent 40%)`,
+        }}
+      />
+
       <div className="relative z-10">
         {/* Icon */}
         <div className="mb-5">
@@ -132,8 +160,18 @@ function ServiceCard({
 }
 
 export default function Services() {
+  const [selectedService, setSelectedService] = useState<typeof services[0] | null>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const titleInView = useInView(titleRef, { once: true, margin: "-80px" });
+
+  // Prevent scroll when modal is open
+  useEffect(() => {
+    if (selectedService) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [selectedService]);
 
   return (
     <section id="services" className="py-28 px-6 relative overflow-hidden">
@@ -180,15 +218,105 @@ export default function Services() {
         {/* Services grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {services.slice(0, 3).map((service, i) => (
-            <ServiceCard key={service.title} service={service} index={i} />
+            <ServiceCard key={service.title} service={service} index={i} onClick={() => setSelectedService(service)} />
           ))}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5 max-w-4xl mx-auto">
           {services.slice(3).map((service, i) => (
-            <ServiceCard key={service.title} service={service} index={i + 3} />
+            <ServiceCard key={service.title} service={service} index={i + 3} onClick={() => setSelectedService(service)} />
           ))}
         </div>
       </div>
+
+      {/* Modern Modal Overlay */}
+      <AnimatePresence>
+        {selectedService && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedService(null)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] cursor-pointer"
+            />
+            <div className="fixed inset-0 z-[101] flex items-center justify-center p-6 pointer-events-none">
+              <motion.div
+                layoutId={`card-${selectedService.title}`}
+                className="w-full max-w-2xl bg-[var(--surface)] rounded-[2.5rem] border border-[var(--border)] overflow-hidden shadow-2xl pointer-events-auto relative"
+              >
+                {/* Premium Background for Modal */}
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-transparent to-cyan-500/5 pointer-events-none" />
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500" />
+                
+                <button 
+                  onClick={() => setSelectedService(null)}
+                  className="absolute top-6 right-6 p-2 rounded-full bg-[var(--surface-soft)] text-[var(--text-muted)] hover:text-[var(--foreground)] transition-colors z-20"
+                >
+                  <X size={20} />
+                </button>
+
+                <div className="p-10 md:p-14 relative z-10">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="flex items-center gap-6 mb-8"
+                  >
+                    <div className={`w-16 h-16 rounded-2xl ${selectedService.iconBg} flex items-center justify-center shadow-lg shadow-violet-500/10`}>
+                      <selectedService.icon size={32} className={selectedService.iconColor} />
+                    </div>
+                    <div>
+                      <h3 className="text-3xl font-bold text-[var(--foreground)] tracking-tight">
+                        {selectedService.title}
+                      </h3>
+                      <p className="text-violet-500 font-medium">Professional Service</p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <p className="text-lg text-[var(--text-muted)] leading-relaxed mb-10">
+                      {selectedService.description} We bring years of expertise and a passion for excellence to every project, ensuring your vision is translated into a powerful digital reality.
+                    </p>
+
+                    <div className="space-y-4 mb-10">
+                      <div className="text-sm font-semibold uppercase tracking-widest text-[var(--text-soft)]">Key Features</div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {["Premium Quality", "On-time Delivery", "Scalable Solutions", "Dedicated Support"].map((feature) => (
+                          <div key={feature} className="flex items-center gap-3 text-[var(--foreground)]">
+                            <CheckCircle2 size={18} className="text-violet-500" />
+                            <span>{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-3 mb-12">
+                      {selectedService.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-sm px-4 py-1.5 rounded-full bg-[var(--surface-soft)] text-[var(--text-muted)] border border-[var(--border)]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    <button 
+                      className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-violet-600 text-white font-semibold hover:bg-violet-700 hover:shadow-xl hover:shadow-violet-500/20 transition-all duration-300 transform hover:-translate-y-1"
+                    >
+                      Start Project
+                    </button>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
