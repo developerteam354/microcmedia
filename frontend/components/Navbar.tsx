@@ -61,7 +61,7 @@ export default function Navbar() {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <span className="font-bold text-[var(--foreground)] tracking-tight text-lg hidden sm:inline">
+              <span className="font-bold text-[var(--foreground)] tracking-tight text-base sm:text-lg">
                 Micro C <span className="text-[var(--text-muted)]">Media</span>
               </span>
             </a>

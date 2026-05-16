@@ -142,6 +142,12 @@ body {
   background-clip: text;
 }
 
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 .gradient-text-warm {
   background: linear-gradient(135deg, var(--foreground) 0%, var(--text-soft) 100%);
   -webkit-background-clip: text;

@@ -6,7 +6,6 @@ import {
     useScroll,
     useTransform,
     MotionValue,
-    useMotionTemplate,
     useSpring,
 } from "framer-motion";
 import Image from "next/image";
@@ -73,14 +72,15 @@ function StackCard({
     // Slide-in completes at 32% of the slice — gives it room to breathe
     const entryEnd = sliceStart + sliceSize * 0.32;
 
+    const smoothConfig = { stiffness: 45, damping: 14, mass: 0.2 };
+
     // ── Slide up from below on entry ──
     const yRaw = useTransform(
         scrollYProgress,
         index === 0 ? [0, 1] : [sliceStart, entryEnd],
-        index === 0 ? ["0%", "0%"] : ["110%", "0%"]
+        index === 0 ? ["0%", "0%"] : ["120%", "0%"]
     );
-    // Spring-smooth the raw transform for organic feel
-    const y = useSpring(yRaw, { stiffness: 60, damping: 18, mass: 0.8 });
+    const y = useSpring(yRaw, smoothConfig);
 
     // ── Scale & dim this card when the next one enters ──
     const nextSliceStart = (index + 1) * sliceSize;
@@ -89,36 +89,34 @@ function StackCard({
     const scaleRaw = useTransform(
         scrollYProgress,
         index < n - 1 ? [nextSliceStart, nextEntryEnd] : [0, 1],
-        index < n - 1 ? [1, 0.88] : [1, 1]
+        index < n - 1 ? [1, 0.9] : [1, 1]
     );
-    const scale = useSpring(scaleRaw, { stiffness: 55, damping: 20, mass: 0.9 });
+    const scale = useSpring(scaleRaw, smoothConfig);
 
     const opacityRaw = useTransform(
         scrollYProgress,
         index < n - 1 ? [nextSliceStart, nextEntryEnd] : [0, 1],
-        index < n - 1 ? [1, 0.45] : [1, 1]
+        index < n - 1 ? [1, 0.3] : [1, 1]
     );
-    const opacity = useSpring(opacityRaw, { stiffness: 55, damping: 20, mass: 0.9 });
+    const opacity = useSpring(opacityRaw, smoothConfig);
 
     // ── Subtle Y offset so cards stack with depth ──
     const stackOffsetRaw = useTransform(
         scrollYProgress,
         index < n - 1 ? [nextSliceStart, nextEntryEnd] : [0, 1],
-        index < n - 1 ? ["0px", "-28px"] : ["0px", "0px"]
+        index < n - 1 ? ["0px", "-24px"] : ["0px", "0px"]
     );
-    const stackOffset = useSpring(stackOffsetRaw, { stiffness: 55, damping: 20, mass: 0.9 });
+    const stackOffset = useSpring(stackOffsetRaw, smoothConfig);
 
-    // ── Brightness filter ──
-    const brightnessVal = useTransform(
+    // ── Faster Darken effect via Opacity (replacing CSS filter: brightness) ──
+    const darkenOpacityRaw = useTransform(
         scrollYProgress,
         index < n - 1 ? [nextSliceStart, nextEntryEnd] : [0, 1],
-        index < n - 1 ? [1, 0.55] : [1, 1]
+        index < n - 1 ? [0, 0.65] : [0, 0]
     );
-    const filterStyle = useMotionTemplate`brightness(${brightnessVal})`;
+    const darkenOpacity = useSpring(darkenOpacityRaw, smoothConfig);
 
     // ── Border glow on the active (top) card ──
-    // "Active" = this card is currently on top = it has entered but next hasn't yet
-    // We derive a "glow intensity" that fades in as card arrives and fades out as next arrives
     const glowIn = useTransform(
         scrollYProgress,
         index === 0 ? [0, 0.001] : [sliceStart, entryEnd],
@@ -129,8 +127,6 @@ function StackCard({
         index < n - 1 ? [nextSliceStart, nextEntryEnd] : [0.999, 1],
         index < n - 1 ? [1, 0] : [1, 0]
     );
-    // Combined: both must be high → active
-    // We use glowIn as the driver and glowOut as a multiplier via CSS var trick
     const borderOpacity = useTransform(
         [glowIn, glowOut] as MotionValue<number>[],
         ([i, o]: number[]) => Math.min(i, o)
@@ -146,6 +142,7 @@ function StackCard({
                 transformOrigin: "top center",
                 opacity,
                 translateY: stackOffset,
+                willChange: "transform, opacity",
             }}
         >
             {/* Outer glow ring — animate opacity */}
@@ -155,6 +152,7 @@ function StackCard({
                     opacity: borderOpacity,
                     boxShadow: "0 0 0 1.5px rgba(255,255,255,0.55), 0 0 48px 6px rgba(255,255,255,0.12)",
                     zIndex: 10,
+                    willChange: "opacity",
                 }}
             />
 
@@ -162,10 +160,17 @@ function StackCard({
             <motion.div
                 className="absolute left-4 right-4 top-[18svh] bottom-[18svh] overflow-hidden rounded-2xl bg-[#0d0d0d] sm:left-8 sm:right-8 md:left-[12vw] md:right-[12vw] md:top-[10vh] md:bottom-[10vh] md:rounded-3xl"
                 style={{
-                    filter: filterStyle,
                     boxShadow: "0 22px 70px rgba(0,0,0,0.48), 0 4px 16px rgba(0,0,0,0.28)",
+                    transform: "translateZ(0)", // Force hardware acceleration
+                    willChange: "transform",
                 }}
             >
+                {/* Darken Overlay (much faster than CSS filter on scroll) */}
+                <motion.div 
+                    className="absolute inset-0 bg-black pointer-events-none z-20"
+                    style={{ opacity: darkenOpacity, willChange: "opacity" }}
+                />
+                
                 {/* Animated shimmer border */}
                 <motion.div
                     className="absolute inset-0 rounded-2xl pointer-events-none md:rounded-3xl"
@@ -202,7 +207,7 @@ function StackCard({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/10" />
 
                 {/* Top row: label + year */}
-                <div className="absolute top-4 left-4 right-4 flex items-center justify-between md:top-5 md:left-7 md:right-7">
+                <div className="absolute top-4 left-4 right-4 flex items-center justify-between md:top-5 md:left-7 md:right-7 z-30">
                     {img.label && (
                         <span
                             className="font-mono text-[10px] tracking-[0.28em] text-white/35 uppercase"
@@ -221,7 +226,7 @@ function StackCard({
                 </div>
 
                 {/* Bottom: title + tag + description + progress */}
-                <div className="absolute bottom-4 left-4 right-4 md:bottom-6 md:left-7 md:right-7">
+                <div className="absolute bottom-4 left-4 right-4 md:bottom-6 md:left-7 md:right-7 z-30">
                     <div className="flex flex-col items-start gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
                         <div className="flex-1 min-w-0">
                             <h3 className="text-white text-base md:text-xl font-semibold tracking-tight leading-tight md:mb-1.5">
