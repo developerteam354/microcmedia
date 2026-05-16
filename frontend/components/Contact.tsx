@@ -83,14 +83,13 @@ export default function Contact() {
 
           <motion.div initial={{ opacity: 0, x: 40 }} animate={isInView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8, delay: 0.4 }} className="lg:col-span-3 relative group perspective-[1200px]">
             
-            {/* Animated Background Aura for Form Card (Vastly increased visibility for light mode) */}
-            <div className="absolute -inset-2 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 rounded-[2.5rem] blur-2xl opacity-60 group-hover:opacity-100 dark:opacity-5 dark:group-hover:opacity-15 transition duration-1000 group-hover:duration-500 pointer-events-none" />
-
-            <div className="bg-[var(--surface)] rounded-3xl border border-[var(--border)] p-8 relative overflow-hidden theme-shadow-card backdrop-blur-xl transition-shadow duration-500 hover:shadow-[0_20px_60px_rgba(139,92,246,0.15)] dark:hover:shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
+            <div className="bg-[var(--surface)] rounded-3xl border border-[var(--border)] p-8 relative overflow-hidden theme-shadow-card backdrop-blur-xl transition-all duration-500 hover:shadow-[0_20px_60px_rgba(139,92,246,0.15)] dark:hover:shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
               
-              {/* Subtle inner floating glows (Greatly increased visibility for light mode) */}
-              <div className="absolute -top-32 -right-32 w-64 h-64 bg-violet-500/50 dark:bg-violet-500/5 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-cyan-500/50 dark:bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+              {/* Premium Animated Background Layer using a standard violet theme */}
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-transparent to-violet-500/5 dark:from-violet-500/20 dark:via-transparent dark:to-violet-500/5 animate-gradient-flow pointer-events-none opacity-70" />
+              
+              {/* Subtle animated top border highlight */}
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-violet-500/40 to-transparent animate-[shimmer_3s_infinite]" />
 
               {/* Subtle animated border sweep effect */}
               <div 

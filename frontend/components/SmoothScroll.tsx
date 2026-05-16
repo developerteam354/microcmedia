@@ -16,10 +16,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
         import("lenis").then(({ default: Lenis }) => {
             const lenis = new Lenis({
-                lerp: 0.06, // Highly fluid floaty scroll
+                lerp: 0.1, // Faster responsiveness (default is usually 0.1)
                 smoothWheel: true,
-                syncTouch: true,
-                touchMultiplier: 1.5,
+                syncTouch: false, // Let native mobile momentum scroll work
+                touchMultiplier: 1.0, // Native 1:1 speed
             });
 
             lenisInstance = lenis;
