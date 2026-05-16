@@ -9,14 +9,20 @@ import Testimonials from "@/components/Testimonials";
 import FAQ from "@/components/FAQ";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import ScrollPipeline from "@/components/ScrollPipeline";
 
 export default function Home() {
   return (
     <>
       <CustomCursor />
       <Navbar />
-      {/* pt-[72px] offsets the fixed navbar height so no section slides under it */}
-      <main className="pt-[72px]">
+      {/*
+        `relative` on main is required — the canvas uses position:absolute
+        and must be contained within this element so it covers the full
+        document height (not just the viewport).
+      */}
+      <main className="pt-[72px] relative">
+        <ScrollPipeline />
         <Hero />
         <Stats />
         <Services />
